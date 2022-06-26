@@ -3,7 +3,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 const serverUrl = `${process.env.REACT_APP_SERVER_URL}`
 
-export default function Comment({ comment: { _id, content }, blogId }) {
+export default function Comment({
+  comment: { _id, content },
+  blogId,
+  setComments,
+}) {
   const [editedComment, setEditedComment] = useState({ content: '' })
   const [edit, setEdit] = useState(false)
 
@@ -12,6 +16,9 @@ export default function Comment({ comment: { _id, content }, blogId }) {
   const deleteComment = async () => {
     try {
       await axios.delete(`${serverUrl}/comment/${_id}`)
+      const res = await axios.get(`${serverUrl}/blogs/${blogId}`)
+      setComments(res.data.comments)
+      console.log(res)
       navigate(`/blogs/${blogId}`)
     } catch (err) {
       console.warn(err)
@@ -22,6 +29,8 @@ export default function Comment({ comment: { _id, content }, blogId }) {
     e.preventDefault()
     try {
       await axios.put(`${serverUrl}/comment/${_id}`, editedComment)
+      const res = await axios.get(`${serverUrl}/blogs/${blogId}`)
+      setComments(res.data.comments)
       setEdit(!edit)
     } catch (err) {
       console.warn(err)

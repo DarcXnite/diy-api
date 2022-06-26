@@ -23,22 +23,24 @@ export default function Blog() {
     }
 
     singleBlogDeets()
-  }, [id, comments])
+  }, [id]) // check why this is happening
 
   const makeComment = async comment => {
     try {
       const res = await axios.post(`${serverUrl}/blogs/${id}/comment`, comment)
-      setComments([...comments, res.data])
+      console.log(res)
+      setBlog(res.data)
+      setComments(res.data.comments)
     } catch (err) {
       console.warn(err)
     }
   }
 
   const allComments = comments.map(comment => {
-    // console.log(comment._id) // ASK WESTON ABOUT WHY THIS RUNS SO MANY TIMES!!!!
+    // console.log(comment._id)
     return (
       <div key={comment._id}>
-        <Comment comment={comment} blogId={id} />
+        <Comment comment={comment} blogId={id} setComments={setComments} />
       </div>
     )
   })
